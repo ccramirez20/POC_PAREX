@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalentAI - Asistente Inteligente de Selección</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #480E2A;
+            --secondary: #E3E2DA;
+            --dark: #260717;
+            --white: #FFFFFF;
+            --gray: #6c757d;
+            --light: #f8f9fa;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--secondary);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 2rem;
+        }
+        
+        .logo-container {
+            flex: 0 0 200px;
+            height: 70px;
+            background-color: #480E2A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            margin-right: 1rem;
+        }
+        
+        .logo-img {
+            height: 40px; 
+            width: auto;
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .header-title {
+            flex: 1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 1rem auto;
+            padding: 0 1rem;
+            flex: 1;
+        }
+        
+        .card {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-header i {
+            font-size: 1.5rem;
+            margin-right: 0.8rem;
+        }
+        
+        .card-header h2 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .intro {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--gray);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--primary);
+            background-color: rgba(72, 14, 42, 0.05);
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .upload-area p {
+            margin-bottom: 1rem;
+        }
+        
+        .file-list {
+            margin-top: 1.5rem;
+        }
+        
+        .file-item {
+            background-color: var(--light);
+            margin-bottom: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .file-item i {
+            margin-right: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: var(--dark);
+        }
+        
+        .btn:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background-color: var(--gray);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .loading i {
+            font-size: 3rem;
+            color: var(--primary);
+            animation: spin 1s infinite linear;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .results-container {
+            display: none;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--gray);
+        }
+        
+        .tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .cv-overview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .cv-card {
+            background-color: var(--light);
+            border-radius: 8px;
+            padding: 1rem;
+            flex: 1 0 calc(33% - 1rem);
+            min-width: 300px;
+            border-left: 5px solid var(--primary);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .cv-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .compatibility {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            flex: 1;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin: 0 1rem;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            border-radius: 5px;
+        }
+        
+        .cv-detail {
+            display: none;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            margin: 1.5rem 0 0.8rem 0;
+            border-bottom: 1px solid var(--gray);
+            padding-bottom: 0.5rem;
+        }
+        
+        .detail-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .company-verify {
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        
+        .verify-true {
+            color: #28a745;
+        }
+        
+        .verify-false {
+            color: #dc3545;
+        }
+        
+        .chat-container {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background-color: var(--light);
+            border-radius: 8px;
+        }
+        
+        .message {
+            max-width: 80%;
+            margin-bottom: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .user-message {
+            background-color: var(--primary);
+            color: var(--white);
+            margin-left: auto;
+        }
+        
+        .assistant-message {
+            background-color: var(--secondary);
+            color: var(--dark);
+        }
+        
+        .chat-input {
+            display: flex;
+            margin-top: 1rem;
+        }
+        
+        .chat-input textarea {
+            flex: 1;
+            border: 1px solid var(--gray);
+            border-radius: 4px;
+            padding: 0.8rem;
+            resize: none;
+            height: 60px;
+        }
+        
+        .chat-input button {
+            margin-left: 0.5rem;
+            align-self: flex-end;
+        }
+        
+        .job-description {
+            background-color: var(--light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .job-field {
+            margin-bottom: 1rem;
+        }
+        
+        .job-field label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .job-field input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--gray);
+            border-radius: 4px;
+        }
+        
+        .requirement-list {
+            margin-bottom: 1rem;
+        }
+        
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .requirement-item input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--gray);
+            border-radius: 4px;
+            margin-right: 0.5rem;
+        }
+        
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+        
+        footer {
+            background-color: var(--primary);
+            color: var(--white);
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: auto;
+        }
+        
+        .strengths-gaps {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .strength-item, .gap-item {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .strength-item {
+            background-color: rgba(40, 167, 69, 0.1);
+            border-left: 4px solid #28a745;
+        }
+        
+        .gap-item {
+            background-color: rgba(220, 53, 69, 0.1);
+            border-left: 4px solid #dc3545;
+        }
+        
+        @media (max-width: 768px) {
+            .cv-card {
+                flex: 1 0 100%;
+            }
+            
+            .strengths-gaps {
+                flex-direction: column;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-container {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <img src="/static/indra-logo.png" alt="Logo TalentAI" class="logo-img">
+            </div>
+            <div class="header-title">
+                <h1>TalentAI - Asistente Inteligente de Selección</h1>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Sección de Introducción -->
+        <div id="intro-section" class="main-section active">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-info-circle"></i>
+                    <h2>Bienvenido a TalentAI</h2>
+                </div>
+                <div class="card-body">
+                    <div class="intro">
+                        <p>TalentAI es una herramienta avanzada que utiliza inteligencia artificial para analizar currículums y evaluar la compatibilidad de los candidatos con tu oferta laboral. Carga tus CVs y obtén información detallada sobre:</p>
+                        <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                            <li>Experiencia laboral y educación de los candidatos</li>
+                            <li>Habilidades técnicas y competencias</li>
+                            <li>Porcentaje de compatibilidad con el puesto</li>
+                            <li>Verificación de empresas mencionadas en el CV</li>
+                            <li>Análisis de fortalezas y brechas del candidato</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de Carga de CVs -->
+        <div id="upload-section" class="main-section">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-upload"></i>
+                    <h2>Cargar Currículums</h2>
+                </div>
+                <div class="card-body">
+                    <div class="upload-area" id="drop-area">
+                        <i class="fas fa-file-upload"></i>
+                        <p>Arrastra y suelta tus archivos aquí o haz clic para seleccionarlos</p>
+                        <button class="btn" id="select-files">Seleccionar archivos</button>
+                        <input type="file" id="file-input" multiple style="display: none;">
+                    </div>
+                    <div class="file-list" id="file-list"></div>
+                    <div style="text-align: center; margin-top: 1.5rem;">
+                        <button class="btn" id="process-btn" disabled>Procesar CVs</button>
+                    </div>
+                    <div class="loading" id="loading">
+                        <i class="fas fa-spinner"></i>
+                        <p>Procesando currículums...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de Resultados -->
+        <div id="results-section" class="main-section">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar"></i>
+                    <h2>Resultados del Análisis</h2>
+                </div>
+                <div class="card-body">
+                    <div class="tabs">
+                        <div class="tab active" data-tab="overview">Vista General</div>
+                        <div class="tab" data-tab="details">Detalles</div>
+                    </div>
+                    
+                    <div class="tab-content active" id="overview">
+                        <h3>Resumen de candidatos analizados</h3>
+                        <div class="cv-overview" id="cv-overview">
+                            <!-- CVs cards will be added here dynamically -->
+                            <p class="no-results">Aún no hay resultados disponibles. Carga y procesa CVs para ver el análisis.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="details">
+                        <div id="cv-detail">
+                            <!-- Selected CV details will be shown here -->
+                            <p class="no-cv-selected">Selecciona un CV de la vista general para ver sus detalles.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de Chat -->
+        <div id="chat-section" class="main-section">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-comments"></i>
+                    <h2>Chat con TalentAI</h2>
+                </div>
+                <div class="card-body">
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="message assistant-message">
+                                Hola, soy TalentAI. ¿En qué puedo ayudarte hoy? Puedes preguntarme sobre los candidatos analizados o sobre consejos de selección de personal.
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <textarea id="chat-input" placeholder="Escribe tu mensaje aquí..."></textarea>
+                            <button class="btn" id="send-btn">Enviar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sección de Descripción del Puesto -->
+        <div id="job-section" class="main-section">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-briefcase"></i>
+                    <h2>Descripción del Puesto</h2>
+                </div>
+                <div class="card-body">
+                    <div class="job-description">
+                        <div class="job-field">
+                            <label for="job-title">Título del Puesto</label>
+                            <input type="text" id="job-title" value="Ingeniero de Software Senior">
+                        </div>
+                        
+                        <div class="job-field">
+                            <label>Responsabilidades</label>
+                            <div class="requirement-list" id="responsibilities-list">
+                                <div class="requirement-item">
+                                    <input type="text" value="Diseñar e implementar sistemas backend escalables.">
+                                    <button class="btn btn-sm btn-secondary remove-item"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div class="requirement-item">
+                                    <input type="text" value="Colaborar con equipos multifuncionales.">
+                                    <button class="btn btn-sm btn-secondary remove-item"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div class="requirement-item">
+                                    <input type="text" value="Mantener estándares de calidad y pruebas automatizadas.">
+                                    <button class="btn btn-sm btn-secondary remove-item"><i class="fas fa-times"></i></button>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm" id="add-responsibility">Añadir responsabilidad</button>
+                        </div>
+                        
+                        <div class="job-field">
+                            <label>Requisitos</label>
+                            <div class="requirement-list" id="requirements-list">
+                                <div class="requirement-item">
+                                    <input type="text" value="5+ años de experiencia en Python y Django.">
+                                    <button class="btn btn-sm btn-secondary remove-item"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div class="requirement-item">
+                                    <input type="text" value="Conocimiento de Docker y Kubernetes.">
+                                    <button class="btn btn-sm btn-secondary remove-item"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div class="requirement-item">
+                                    <input type="text" value="Nivel avanzado de inglés.">
+                                    <button class="btn btn-sm btn-secondary remove-item"><i class="fas fa-times"></i></button>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm" id="add-requirement">Añadir requisito</button>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 1.5rem;">
+                            <button class="btn" id="update-job-btn">Actualizar Descripción</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2025 Minsait - TalentAI - Todos los derechos reservados</p>
+    </footer>
+    
+    <script>
+        // Variables globales
+        let files = [];
+        let cvResults = [];
+        let currentChatSessionId = null;
+        let jobDescription = {
+            titulo: "Ingeniero de Software Senior",
+            responsabilidades: [
+                "Diseñar e implementar sistemas backend escalables.",
+                "Colaborar con equipos multifuncionales.",
+                "Mantener estándares de calidad y pruebas automatizadas."
+            ],
+            requisitos: [
+                "5+ años de experiencia en Python y Django.",
+                "Conocimiento de Docker y Kubernetes.",
+                "Nivel avanzado de inglés."
+            ]
+        };
+        
+        // Elementos DOM
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        const fileList = document.getElementById('file-list');
+        const processBtn = document.getElementById('process-btn');
+        const loading = document.getElementById('loading');
+        const resultsContainer = document.getElementById('results-container');
+        const cvOverview = document.getElementById('cv-overview');
+        const cvDetail = document.getElementById('cv-detail');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const selectFilesBtn = document.getElementById('select-files');
+        const jobTitleInput = document.getElementById('job-title');
+        const responsibilitiesList = document.getElementById('responsibilities-list');
+        const requirementsList = document.getElementById('requirements-list');
+        const addResponsibilityBtn = document.getElementById('add-responsibility');
+        const addRequirementBtn = document.getElementById('add-requirement');
+        const updateJobBtn = document.getElementById('update-job-btn');
+        
+        // Event Listeners
+        selectFilesBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFileSelect);
+        processBtn.addEventListener('click', processFiles);
+        sendBtn.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendChatMessage();
+            }
+        });
+        
+        // Drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        dropArea.addEventListener('drop', handleDrop, false);
+        
+        // Tabs event listeners
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                const tabName = tab.getAttribute('data-tab');
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+        
+        // Job description event listeners
+        addResponsibilityBtn.addEventListener('click', () => addRequirementItem(responsibilitiesList));
+        addRequirementBtn.addEventListener('click', () => addRequirementItem(requirementsList));
+        updateJobBtn.addEventListener('click', updateJobDescription);
+        
+        // Event delegation for remove buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-item') || e.target.parentElement.classList.contains('remove-item')) {
+                const btn = e.target.classList.contains('remove-item') ? e.target : e.target.parentElement;
+                btn.closest('.requirement-item').remove();
+            }
+        });
+        
+        // Functions
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        function highlight() {
+            dropArea.classList.add('dragover');
+        }
+        
+        function unhighlight() {
+            dropArea.classList.remove('dragover');
+        }
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const newFiles = [...dt.files];
+            handleFiles(newFiles);
+        }
+        
+        function handleFileSelect(e) {
+            const newFiles = [...e.target.files];
+            handleFiles(newFiles);
+        }
+        
+        function handleFiles(newFiles) {
+            files = [...files, ...newFiles];
+            updateFileList();
+            if (files.length > 0) {
+                processBtn.disabled = false;
+            }
+        }
+        
+        function updateFileList() {
+            fileList.innerHTML = '';
+            files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                let icon = 'file-alt';
+                if (file.name.endsWith('.pdf')) icon = 'file-pdf';
+                else if (file.name.match(/\.(jpe?g|png|gif)$/i)) icon = 'file-image';
+                else if (file.name.match(/\.(doc|docx)$/i)) icon = 'file-word';
+                
+                fileItem.innerHTML = `
+                    <i class="fas fa-${icon}"></i>
+                    <span>${file.name}</span>
+                    <button class="btn btn-sm btn-secondary remove-file" data-index="${index}" style="margin-left: auto;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                fileList.appendChild(fileItem);
+                
+                fileItem.querySelector('.remove-file').addEventListener('click', function() {
+                    removeFile(parseInt(this.getAttribute('data-index')));
+                });
+            });
+        }
+        
+        function removeFile(index) {
+            files.splice(index, 1);
+            updateFileList();
+            processBtn.disabled = files.length === 0;
+        }
+    
+        function processFiles() {
+            if (files.length === 0) return;
+            
+            loading.style.display = 'block';
+            processBtn.disabled = true;
+            
+            const formData = new FormData();
+            files.forEach(file => {
+                formData.append('cvs', file);
+            });
+            
+            console.log("Enviando archivos:", files.map(f => f.name));
+            
+            fetch('/procesar_cvs', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log("Respuesta HTTP:", response.status, response.statusText);
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+                }
+                
+                return response.text().then(text => {
+                    try {
+                        if (!text || text.trim() === '') {
+                            throw new Error("Respuesta vacía del servidor");
+                        }
+                        console.log("Texto de respuesta:", text.substring(0, 200) + (text.length > 200 ? "..." : ""));
+                        return JSON.parse(text);
+                    } catch (e) {
+                        console.error("Error al parsear JSON:", e);
+                        console.error("Texto recibido:", text);
+                        throw new Error("La respuesta del servidor no es un JSON válido");
+                    }
+                });
+            })
+            .then(data => {
+                loading.style.display = 'none';
+                processBtn.disabled = false;
+
+                console.log("Datos recibidos:", data);
+                
+                try {
+                    // Validar que data sea un array
+                    if (!Array.isArray(data)) {
+                        console.error("La respuesta no es un array:", data);
+                        alert('Formato de respuesta incorrecto. Por favor contacta al soporte técnico.');
+                        return;
+                    }
+                    
+                    // Si no hay datos, no hay nada que procesar
+                    if (data.length === 0) {
+                        console.warn("La respuesta está vacía");
+                        alert('No se recibieron resultados del servidor.');
+                        return;
+                    }
+
+                    // Verificar la estructura de cada elemento
+                    cvResults = data.map(item => {
+                        // Si el elemento no es un objeto, crear un objeto de error
+                        if (!item || typeof item !== 'object') {
+                            return { 
+                                error: "Formato de datos inválido", 
+                                filename: "Archivo desconocido" 
+                            };
+                        }
+                        
+                        // Mantener el elemento original pero asegurarse de que tenga las propiedades básicas
+                        if (!item.error) {
+                            if (!item.cv_info) item.cv_info = {};
+                            if (!item.compatibilidad) item.compatibilidad = {};
+                            
+                            // Garantizar que existan las propiedades necesarias
+                            if (!item.cv_info.skills) item.cv_info.skills = [];
+                            if (!item.compatibilidad.strengths) item.compatibilidad.strengths = [];
+                            if (!item.compatibilidad.gaps) item.compatibilidad.gaps = [];
+                        }
+                        
+                        return item;
+                    });
+                    
+                    // Identificar CVs con error
+                    const errores = cvResults.filter(item => item.error);
+                    
+                    // Caso 1: Todos los CVs fallaron
+                    if (errores.length === cvResults.length && cvResults.length > 0) {
+                        console.error("Todos los CVs tienen errores:", errores);
+                        alert('Ocurrió un error al procesar los CVs. Por favor intenta de nuevo.');
+                        return;
+                    }
+                    
+                    // Caso 2: Algunos CVs fallaron, otros se procesaron correctamente
+                    if (errores.length > 0 && cvResults.length > errores.length) {
+                        console.warn("Algunos CVs con errores:", errores);
+                        alert(`Algunos CVs no se pudieron procesar:\n${errores.map(e => `${e.filename || 'Archivo desconocido'}: ${e.error || 'Error desconocido'}`).join('\n')}`);
+                    }
+                    
+                    // Intentar mostrar los resultados
+                    displayResults();
+                    resultsContainer.style.display = 'block';
+                    resultsContainer.scrollIntoView({ behavior: 'smooth' });
+                    
+                } catch (processingError) {
+                    console.error("Error al procesar la respuesta:", processingError);
+                    //alert('Error al procesar la respuesta del servidor. Por favor intenta de nuevo.');
+                }
+            })
+            .catch(error => {
+                console.error('Error en la petición:', error);
+                loading.style.display = 'none';
+                processBtn.disabled = false;
+                
+                // Mensaje de error más específico según el tipo de error
+                if (error.message.includes("JSON")) {
+                    alert("Error: La respuesta del servidor no tiene el formato esperado. Contacta al soporte técnico.");
+                } else if (error.message.includes("vacía")) {
+                    alert("Error: El servidor envió una respuesta vacía. Intenta de nuevo o contacta al soporte técnico.");
+                } else if (error.message.includes("HTTP")) {
+                    alert(`Error de conexión: ${error.message}. Por favor intenta de nuevo más tarde.`);
+                } else {
+                    alert("Ocurrió un error inesperado. Por favor intenta de nuevo.");
+                }
+            });
+        }
+
+        function displayResults() {
+            // Limpiar mensajes de error anteriores
+            document.querySelectorAll('.alert-danger').forEach(el => el.remove());
+            
+            try {
+                // Limpiar resultados anteriores
+                cvOverview.innerHTML = '';
+                
+                // Validación defensiva
+                if (!Array.isArray(cvResults)) {
+                    console.error("cvResults no es un array:", cvResults);
+                    cvOverview.innerHTML = '<div class="alert alert-danger">Error: formato de resultados inválido.</div>';
+                    return;
+                }
+                
+                if (cvResults.length === 0) {
+                    console.warn("No hay resultados para mostrar");
+                    cvOverview.innerHTML = '<div class="alert alert-warning">No hay resultados para mostrar.</div>';
+                    return;
+                }
+                
+                // Generar tarjetas de resumen
+                cvResults.forEach((result, index) => {
+                    try {
+                        // Crear el elemento contenedor para la tarjeta
+                        const card = document.createElement('div');
+                        card.className = 'cv-card';
+                        card.setAttribute('data-index', index);
+                        
+                        // Garantizar que el nombre del archivo siempre tenga un valor
+                        const filename = result && result.filename ? result.filename : `CV ${index + 1}`;
+                        
+                        // Manejar caso de error
+                        if (result && result.error) {
+                            card.innerHTML = `
+                                <h3>${sanitizeHTML(filename)}</h3>
+                                <p style="color: red; font-weight: bold;">Error: ${sanitizeHTML(result.error)}</p>
+                            `;
+                            cvOverview.appendChild(card);
+                            return; // No seguir procesando este CV
+                        }
+                        
+                        // Verificar que los objetos necesarios existan
+                        if (!result || !result.cv_info || !result.compatibilidad) {
+                            console.warn(`Datos incompletos para CV en índice ${index}:`, result);
+                            card.innerHTML = `
+                                <h3>${sanitizeHTML(filename)}</h3>
+                                <p style="color: orange; font-weight: bold;">Datos incompletos</p>
+                            `;
+                            cvOverview.appendChild(card);
+                            return; // No seguir procesando este CV
+                        }
+                        
+                        // Extraer datos con valores por defecto para evitar errores
+                        const compatibility = Number(result.compatibilidad.compatibility_percentage || 0);
+                        
+                        // Asegurarse de que skills existe y es un array
+                        const skills = Array.isArray(result.cv_info.skills) ? result.cv_info.skills : [];
+                        
+                        // Crear el HTML de la tarjeta
+                        card.innerHTML = `
+                            <h3>${sanitizeHTML(filename)}</h3>
+                            <div class="compatibility">
+                                <span>Compatibilidad:</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${compatibility}%;"></div>
+                                </div>
+                                <span>${compatibility}%</span>
+                            </div>
+                            <p><strong>Habilidades:</strong> ${skills.slice(0, 3).map(sanitizeHTML).join(', ')}${skills.length > 3 ? '...' : ''}</p>
+                        `;
+                        
+                        cvOverview.appendChild(card);
+                        
+                        // Agregar event listener para mostrar detalles
+                        card.addEventListener('click', () => {
+                            try {
+                                // Resaltar la tarjeta seleccionada
+                                document.querySelectorAll('.cv-card').forEach(c => {
+                                    c.style.borderLeftColor = 'var(--primary)';
+                                });
+                                card.style.borderLeftColor = '#28a745';
+                                
+                                // Mostrar detalles del CV
+                                showCVDetail(result);
+                                
+                                // Actualizar el ID de sesión de chat actual
+                                currentChatSessionId = result.session_id || null;
+                                
+                                // Cambiar a la pestaña de detalles
+                                tabs.forEach(t => t.classList.remove('active'));
+                                document.querySelector('.tab[data-tab="details"]')?.classList.add('active');
+                                
+                                tabContents.forEach(content => {
+                                    content.classList.remove('active');
+                                });
+                                document.getElementById('details')?.classList.add('active');
+                            } catch (clickError) {
+                                console.error("Error al manejar clic en tarjeta:", clickError);
+                                alert("Ocurrió un error al mostrar los detalles. Por favor intenta de nuevo.");
+                            }
+                        });
+                        
+                    } catch (cardError) {
+                        console.error(`Error al crear tarjeta para índice ${index}:`, cardError);
+                        // En caso de error en una tarjeta individual, continuamos con las demás
+                    }
+                });
+                
+                if (cvOverview.children.length === 0) {
+                    cvOverview.innerHTML = '<div class="alert alert-warning">No se pudieron mostrar los resultados.</div>';
+                }
+                
+            } catch (error) {
+                console.error("Error general en displayResults:", error);
+                cvOverview.innerHTML = '<div class="alert alert-danger">Error al mostrar los resultados. Por favor intenta de nuevo.</div>';
+            }
+        }
+
+        // Función de ayuda para sanitizar HTML y prevenir inyecciones XSS
+        function sanitizeHTML(text) {
+            if (text === undefined || text === null) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function showCVDetail(result) {
+            try {
+                console.log("Mostrando detalles del CV:", result);
+                
+                // Validación defensiva
+                if (!result || typeof result !== 'object') {
+                    throw new Error("Datos del CV inválidos");
+                }
+                
+                // Acceso seguro a las propiedades con valores por defecto
+                const cv = result.cv_info || {};
+                const compatibility = result.compatibilidad || {};
+                const filename = sanitizeHTML(result.filename || "CV sin nombre");
+                
+                // Extraer datos con validación
+                const compatibilityPercentage = Number(compatibility.compatibility_percentage || 0);
+                const strengths = Array.isArray(compatibility.strengths) ? compatibility.strengths : [];
+                const gaps = Array.isArray(compatibility.gaps) ? compatibility.gaps : [];
+                const workExperience = Array.isArray(cv.work_experience) ? cv.work_experience : [];
+                const education = Array.isArray(cv.education) ? cv.education : [];
+                const languages = Array.isArray(cv.languages) ? cv.languages : [];
+                const skills = Array.isArray(cv.skills) ? cv.skills : [];
+                const verificationData = cv.verificacion_empresas || {};
+                
+                // Comenzar a construir el HTML
+                let detailHTML = `
+                    <h2>${filename}</h2>
+                    <div class="compatibility">
+                        <span>Compatibilidad:</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${compatibilityPercentage}%;"></div>
+                        </div>
+                        <span>${compatibilityPercentage}%</span>
+                    </div>
+                    
+                    <div class="strengths-gaps">
+                        <div class="strength-item">
+                            <h3><i class="fas fa-check-circle"></i> Fortalezas</h3>
+                            <ul>
+                                ${strengths.length > 0 ? 
+                                strengths.map(s => `<li>${sanitizeHTML(s)}</li>`).join('') : 
+                                '<li>No se identificaron fortalezas</li>'}
+                            </ul>
+                        </div>
+                        <div class="gap-item">
+                            <h3><i class="fas fa-exclamation-triangle"></i> Brechas</h3>
+                            <ul>
+                                ${gaps.length > 0 ? 
+                                gaps.map(g => `<li>${sanitizeHTML(g)}</li>`).join('') : 
+                                '<li>No se identificaron brechas</li>'}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                
+                // Sección de experiencia laboral
+                detailHTML += `<h3 class="section-title">Experiencia Laboral</h3>`;
+                if (workExperience.length > 0) {
+                    workExperience.forEach(exp => {
+                        // Acceso seguro a las propiedades
+                        const title = sanitizeHTML(exp.title || 'No especificado');
+                        const company = sanitizeHTML(exp.company || 'No especificado');
+                        const startDate = sanitizeHTML(exp.start_date || 'N/A');
+                        const endDate = sanitizeHTML(exp.end_date || 'Actual');
+                        
+                        // Verificar si la empresa está verificada
+                        const isVerified = Boolean(verificationData[exp.company || '']);
+                        
+                        detailHTML += `
+                            <div class="detail-item">
+                                <strong>${title}</strong> en ${company}
+                                <span class="company-verify ${isVerified ? 'verify-true' : 'verify-false'}">
+                                    <i class="fas fa-${isVerified ? 'check' : 'times'}-circle"></i>
+                                    ${isVerified ? 'Verificada' : 'No verificada'}
+                                </span>
+                                <br>
+                                <span>${startDate} - ${endDate}</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    detailHTML += `<div class="detail-item">No hay información de experiencia laboral</div>`;
+                }
+                
+                // Sección de educación
+                detailHTML += `<h3 class="section-title">Educación</h3>`;
+                if (education.length > 0) {
+                    education.forEach(edu => {
+                        const degree = sanitizeHTML(edu.degree || 'No especificado');
+                        const institution = sanitizeHTML(edu.institution || 'No especificada');
+                        const startDate = sanitizeHTML(edu.start_date || 'N/A');
+                        const endDate = sanitizeHTML(edu.end_date || 'Actual');
+                        
+                        detailHTML += `
+                            <div class="detail-item">
+                                <strong>${degree}</strong> en ${institution}
+                                <br>
+                                <span>${startDate} - ${endDate}</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    detailHTML += `<div class="detail-item">No hay información de educación</div>`;
+                }
+                
+                // Sección de idiomas
+                detailHTML += `<h3 class="section-title">Idiomas</h3>`;
+                if (languages.length > 0) {
+                    languages.forEach(lang => {
+                        const language = sanitizeHTML(lang.language || 'No especificado');
+                        const proficiency = sanitizeHTML(lang.proficiency || 'No especificado');
+                        
+                        detailHTML += `
+                            <div class="detail-item">
+                                <strong>${language}</strong>: ${proficiency}
+                            </div>
+                        `;
+                    });
+                } else {
+                    detailHTML += `<div class="detail-item">No hay información de idiomas</div>`;
+                }
+                
+                // Sección de habilidades
+                detailHTML += `<h3 class="section-title">Habilidades</h3>`;
+                if (skills.length > 0) {
+                    detailHTML += `
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${skills.map(skill => `
+                                <span style="background-color: var(--light); padding: 0.3rem 0.8rem; border-radius: 20px;">
+                                    ${sanitizeHTML(skill)}
+                                </span>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    detailHTML += `<div class="detail-item">No hay información de habilidades</div>`;
+                }
+                
+                // Botón de chat solo si existe session_id
+                if (result.session_id) {
+                    detailHTML += `
+                        <div style="text-align: center; margin-top: 2rem;">
+                            <button class="btn" id="chat-about-cv" data-session="${sanitizeHTML(result.session_id)}">
+                                <i class="fas fa-comments"></i> Chatear sobre este candidato
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                // Actualizar el contenido
+                cvDetail.innerHTML = detailHTML;
+                
+                // Añadir event listener al botón de chat si existe
+                const chatBtn = document.getElementById('chat-about-cv');
+                if (chatBtn) {
+                    chatBtn.addEventListener('click', function() {
+                        try {
+                            const sessionId = this.getAttribute('data-session');
+                            if (sessionId) {
+                                currentChatSessionId = sessionId;
+                                
+                                // Añadir mensaje del sistema al chat
+                                const systemMessage = document.createElement('div');
+                                systemMessage.className = 'message assistant-message';
+                                systemMessage.textContent = `Ahora estamos discutiendo sobre el CV "${filename}". ¿Qué quieres saber sobre este candidato?`;
+                                chatMessages.appendChild(systemMessage);
+                                
+                                // Hacer scroll al final del chat
+                                chatMessages.scrollTop = chatMessages.scrollHeight;
+                                
+                                // Enfocar el campo de entrada
+                                document.querySelector('[data-tab="chat"]')?.click();
+                                setTimeout(() => {
+                                    chatInput.focus();
+                                }, 500);
+                            } else {
+                                console.error("Botón de chat sin session_id");
+                            }
+                        } catch (chatError) {
+                            console.error("Error al iniciar chat:", chatError);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("Error en showCVDetail:", error);
+                cvDetail.innerHTML = '<div class="alert alert-danger">Error al mostrar los detalles del CV. Por favor intenta de nuevo.</div>';
+            }
+        }
+
+
+        function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            // Add user message to chat
+            const userMessageEl = document.createElement('div');
+            userMessageEl.className = 'message user-message';
+            userMessageEl.textContent = message;
+            chatMessages.appendChild(userMessageEl);
+            
+            // Clear input
+            chatInput.value = '';
+            
+            // Disable send button
+            sendBtn.disabled = true;
+            
+            // Show typing indicator
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'message assistant-message';
+            typingIndicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Escribiendo...';
+            chatMessages.appendChild(typingIndicator);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Send message to API
+            const requestData = {
+                session_id: currentChatSessionId || 'general',
+                message: message
+            };
+            
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Error en la comunicación con el chat');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Remove typing indicator
+                chatMessages.removeChild(typingIndicator);
+                
+                // Add assistant message
+                const assistantMessageEl = document.createElement('div');
+                assistantMessageEl.className = 'message assistant-message';
+                assistantMessageEl.textContent = data.reply;
+                chatMessages.appendChild(assistantMessageEl);
+                
+                // Enable send button
+                sendBtn.disabled = false;
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                
+                // Remove typing indicator
+                chatMessages.removeChild(typingIndicator);
+                
+                // Show error message
+                const errorMessageEl = document.createElement('div');
+                errorMessageEl.className = 'message assistant-message';
+                errorMessageEl.textContent = 'Lo siento, ocurrió un error al procesar tu mensaje. Por favor intenta de nuevo.';
+                chatMessages.appendChild(errorMessageEl);
+                
+                // Enable send button
+                sendBtn.disabled = false;
+            });
+        }
+        
+        function addRequirementItem(list) {
+            const item = document.createElement('div');
+            item.className = 'requirement-item';
+            item.innerHTML = `
+                <input type="text" placeholder="Nuevo item...">
+                <button class="btn btn-sm btn-secondary remove-item"><i class="fas fa-times"></i></button>
+            `;
+            list.appendChild(item);
+            
+            // Focus on the new input
+            item.querySelector('input').focus();
+        }
+        
+        function updateJobDescription() {
+            // Update job title
+            jobDescription.titulo = jobTitleInput.value;
+            
+            // Update responsibilities
+            jobDescription.responsabilidades = [];
+            responsibilitiesList.querySelectorAll('input').forEach(input => {
+                const value = input.value.trim();
+                if (value) {
+                    jobDescription.responsabilidades.push(value);
+                }
+            });
+            
+            // Update requirements
+            jobDescription.requisitos = [];
+            requirementsList.querySelectorAll('input').forEach(input => {
+                const value = input.value.trim();
+                if (value) {
+                    jobDescription.requisitos.push(value);
+                }
+            });
+            
+            // Notify user
+            alert('La descripción del puesto ha sido actualizada correctamente.');
+            
+            // Reset CV results (if user wants to reprocess with new job description)
+            if (cvResults.length > 0) {
+                if (confirm('Los cambios en la descripción del puesto pueden afectar la compatibilidad de los CVs analizados. ¿Deseas volver a procesar los CVs con la nueva descripción?')) {
+                    processFiles();
+                }
+            }
+        }
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Bienvenida
+            console.log('TalentAI - Frontend inicializado');
+        });
+    </script>
+</body>
+</html>

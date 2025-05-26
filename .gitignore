@@ -1,0 +1,107 @@
+# Bytecode de Python
+
+__pycache__/
+
+*.py[cod]
+
+*$py.class
+ 
+# Entornos virtuales
+
+src/venv311
+
+.env
+
+.venv/
+
+venv/
+
+ENV/
+
+env.bak/
+
+venv.bak/
+
+src/venv311/
+ 
+# Archivos de configuración y secretos
+
+*.env
+
+.env.*
+ 
+# Archivos de logs
+
+*.log
+ 
+# Archivos de bases de datos locales
+
+*.sqlite3
+
+*.db
+ 
+# Compilación de Cython
+
+*.c
+
+*.so
+ 
+# Archivos de test
+
+.pytest_cache/
+
+.coverage
+
+coverage.xml
+
+htmlcov/
+ 
+# Configuración de IDEs y editores
+
+.vscode/
+
+.idea/
+
+*.sublime-project
+
+*.sublime-workspace
+ 
+# Archivos del sistema operativo
+
+.DS_Store
+
+Thumbs.db
+ 
+# Node.js (si usas frontend con npm/yarn)
+
+node_modules/
+
+npm-debug.log*
+
+yarn-debug.log*
+
+yarn-error.log*
+ 
+# Builds frontend (React/Vite/etc.)
+
+dist/
+
+build/
+
+*.local
+ 
+# Archivos temporales
+
+*.tmp
+
+*.swp
+
+*.bak
+ 
+# Static files generados (si aplica)
+
+staticfiles/
+
+static_root/
+
+ 

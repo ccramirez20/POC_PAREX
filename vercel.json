@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/main.py", 
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb", 
+        "runtime": "python3.12" 
+      }
+    },
+    {
+        "src": "src/templates/**", 
+        "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/procesar_cvs/(.*)", 
+      "dest": "app/main.py"
+    },
+    {
+      "src": "/chat/(.*)", 
+      "dest": "app/main.py"
+    },
+    {
+      "src": "/(.*)", 
+      "dest": "/static/$1"
+    }
+ 
+  ]
+}
