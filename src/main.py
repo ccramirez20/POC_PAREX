@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import openai
 import wikipedia
-import pdfplumber
+import PyPDF2  # <-- Use PyPDF2 instead of pdfplumber
 
 load_dotenv()
 
@@ -64,8 +64,8 @@ all_cvs_context: List[Dict[str, Any]] = []
 
 def extraer_texto_pdf(contenido: bytes) -> str:
     try:
-        with pdfplumber.open(io.BytesIO(contenido)) as pdf:
-            return "\n".join(page.extract_text() or "" for page in pdf.pages)
+        reader = PyPDF2.PdfReader(io.BytesIO(contenido))
+        return "\n".join(page.extract_text() or "" for page in reader.pages)
     except Exception as e:
         print(f"Error extrayendo texto del PDF: {e}")
         return ""
@@ -109,8 +109,8 @@ def verificar_empresas(empresas: List[str]) -> Dict[str, bool]:
 def calcular_compatibilidad(cv: Dict[str, Any]) -> Dict[str, Any]:
     system_msg = (
         "Eres un especialista de selección de personal. "
-        "Compara un perfil de candidato con una descripción de puesto y devuelve: "
-        "compatibility_percentage (0-100), strengths, gaps."
+        "Compara un perfil de candidato con una descripción de puesto y responde SOLO con un JSON válido con las siguientes claves: "
+        "compatibility_percentage (entero 0-100), strengths (lista de cadenas), gaps (lista de cadenas). "
         "No incluyas explicaciones, encabezados, ni texto adicional. SOLO el JSON."
     )
     user_msg = (
