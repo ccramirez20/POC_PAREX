@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 import openai
 import wikipedia
-import PyPDF2  # <-- Use PyPDF2 instead of pdfplumber
+import PyPDF2  
 
 load_dotenv()
 
