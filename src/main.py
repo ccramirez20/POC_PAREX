@@ -52,12 +52,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/", StaticFiles(directory="src/templates", html=True), name="static")
+app.mount("/static", StaticFiles(directory="src/templates", html=True), name="static")
 
 # Ruta para servir el archivo HTML principal
 @app.get("/", response_class=FileResponse)
 async def get_index():
-    return FileResponse("templates/index.html")
+    return FileResponse("src/templates/index.html")
 
 # Contexto global de chat
 global_chat_history: List[Dict[str, str]] = []
