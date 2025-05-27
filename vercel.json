@@ -17,11 +17,11 @@
   "routes": [
     {
       "src": "/procesar_cvs/(.*)", 
-      "dest": "app/main.py"
+      "dest": "src/main.py"
     },
     {
       "src": "/chat/(.*)", 
-      "dest": "app/main.py"
+      "dest": "src/main.py"
     },
     {
       "src": "/(.*)", 
