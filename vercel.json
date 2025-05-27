@@ -17,16 +17,18 @@
   "routes": [
     {
       "src": "/procesar_cvs", 
-      "dest": "src/main.py"
+      "dest": "src/main.py"     
     },
     {
       "src": "/chat", 
       "dest": "src/main.py"
     },
     {
-      "src": "/(.*)", 
-      "dest": "/static/$1"
+      "handle": "filesystem"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
     }
- 
   ]
 }
