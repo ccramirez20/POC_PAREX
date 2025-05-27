@@ -24,6 +24,10 @@
       "dest": "src/main.py"
     },
     {
+      "src": "/static/(.*)",
+      "dest": "src/templates/$1"
+    },
+    {
       "handle": "filesystem"
     },
     {
