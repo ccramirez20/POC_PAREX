@@ -16,11 +16,11 @@
   ],
   "routes": [
     {
-      "src": "/procesar_cvs/(.*)", 
+      "src": "/procesar_cvs", 
       "dest": "src/main.py"
     },
     {
-      "src": "/chat/(.*)", 
+      "src": "/chat", 
       "dest": "src/main.py"
     },
     {
