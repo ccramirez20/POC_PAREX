@@ -28,7 +28,7 @@
     },
     {
       "src": "/",
-      "dest": "/index.html"
+      "dest": "/src/templates/index.html"
     }
   ]
 }
